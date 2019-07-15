@@ -1,0 +1,34 @@
+<configuration debug="true" scan="true" scanPeriod="30 seconds">
+
+    <property name="APP_NAME" value="tb-firecontrol-release" />
+    <property name="LOG_HOME" value="/tb-firecontrol-release" />
+    <property name="ENCODER_PATTERN"
+              value="%d{yyyy-MM-dd  HH:mm:ss.SSS} %-5level [%10.10thread] [%X{X-B3-TraceId}] %logger{20} - %msg%n" />
+    <contextName>${APP_NAME}</contextName>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${APP_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/backup/${APP_NAME}.log.%d{yyyy-MM-dd}
+            </fileNamePattern>
+            <maxHistory>100</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${ENCODER_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ch.qos.logback.core.ConsoleAppender 控制台输出 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] [%X{X-B3-TraceId}] %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <root>
+        <level value="INFO" />
+        <appender-ref ref="console" />
+        <appender-ref ref="FILE" />
+    </root>
+
+</configuration>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.optical</groupId>
+		<artifactId>fibre</artifactId>
+		<version>0.0.1</version>
+		<relativePath/>
+	</parent>
+
+	<groupId>com.optical</groupId>
+	<artifactId>fibre-webapp</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>fibre-webapp</name>
+	<packaging>jar</packaging>
+	<description>Spring Boot web</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<skipTests>true</skipTests>
+	</properties>
+
+	<profiles>
+
+		<profile>
+			<id>local</id>
+			<properties>
+				<profileActive>st</profileActive>
+			</properties>
+			<!-- 是否主动启用profile中定义的properties参数 -->
+			<!--			<activation>
+                            <activeByDefault>true</activeByDefault>
+                        </activation>-->
+		</profile>
+
+		<profile>
+			<id>st</id>
+			<properties>
+				<profileActive>pt</profileActive>
+			</properties>
+			<!-- 是否主动启用profile中定义的properties参数 -->
+			<!--			<activation>
+                            <activeByDefault>true</activeByDefault>
+                        </activation>-->
+		</profile>
+
+		<profile>
+			<id>pro</id>
+			<properties>
+				<profileActive>pro</profileActive>
+			</properties>
+			<!-- 是否主动启用profile中定义的properties参数 -->
+			<!--			<activation>
+                            <activeByDefault>true</activeByDefault>
+                        </activation>-->
+		</profile>
+
+	</profiles>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+
+	</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>application.yml</include>
+					<!--<include>application-${profileActive}.yml</include>-->
+					<include>logback-spring.xml</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
