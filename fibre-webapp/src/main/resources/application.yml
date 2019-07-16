@@ -37,3 +37,10 @@ mybatis:
     local-cache-scope: session
     # 设置但JDBC类型为空时,某些驱动程序 要指定值,default:OTHER，插入空值时不需要指定类型
     jdbc-type-for-null: 'null'
+
+socket:
+ port: 8002
+ pool-keep: 20
+ pool-core: 10
+ pool-max: 30
+ pool-queue-init: 10

@@ -10,14 +10,19 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+@ComponentScan(basePackages = {
+		"com.optical.bean",
+		"com.optical.common",
+		"com.optical.component",
+})
 public class FibreWebappApplication {
 	private static final Logger log = LoggerFactory.getLogger(FibreWebappApplication.class);
 	public static void main(String[] args) {
 
 		SpringApplication.run(FibreWebappApplication.class, args);
 		log.info("=======================here start FibreWebappApplication! ===========================");
-	}
 
+	}
 
 
 }
