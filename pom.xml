@@ -7,7 +7,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.1.6.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>com.optical</groupId>
@@ -49,11 +49,11 @@
         </dependency>
 
         <!--mybatis-->
-        <dependency>
+<!--        <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>1.1.1</version>
-        </dependency>
+        </dependency>-->
 
         <!-- tomcat自带jdbc连接池 -->
         <!--		 <dependency>

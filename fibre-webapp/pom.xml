@@ -6,12 +6,11 @@
 		<groupId>com.optical</groupId>
 		<artifactId>fibre</artifactId>
 		<version>0.0.1</version>
-		<relativePath/>
 	</parent>
 
 	<groupId>com.optical</groupId>
 	<artifactId>fibre-webapp</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>fibre-webapp</name>
 	<packaging>jar</packaging>
 	<description>Spring Boot web</description>
@@ -62,7 +61,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 		<dependency>

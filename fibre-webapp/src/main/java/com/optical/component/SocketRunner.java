@@ -2,13 +2,14 @@ package com.optical.component;
 
 import ch.qos.logback.core.net.server.ServerRunner;
 import com.optical.bean.SocketProperties;
-import com.sun.xml.internal.ws.api.policy.PolicyResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -20,16 +21,20 @@ import java.util.concurrent.TimeUnit;
  * Created by mariry on 2019/7/16.
  */
 @Component
-public class SocketRunner {
-    //public class SocketRunner implements CommandLineRunner {
+@Order(value = 2)
+public class SocketRunner implements CommandLineRunner {
+
+//public class SocketRunner {
 
     private static final Logger log = LoggerFactory.getLogger(SocketRunner.class);
 
     @Autowired
     private SocketProperties properties;
 
-    //@Override
+    @Override
+    //@PostConstruct
     public void run(String... strings) throws Exception {
+    //public void run() throws Exception {
         ServerSocket server = null;
         Socket socket = null;
         server = new ServerSocket(properties.getPort());

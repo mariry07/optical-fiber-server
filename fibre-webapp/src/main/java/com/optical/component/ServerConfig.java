@@ -1,7 +1,11 @@
 package com.optical.component;
 
+import com.optical.Service.OpticalService;
+import com.optical.Service.impl.OpticalServiceImpl;
+import com.optical.common.ByteUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.net.Socket;
@@ -17,6 +21,9 @@ public class ServerConfig extends Thread{
 
     private static final Logger log = LoggerFactory.getLogger(ServerConfig.class);
 
+    //@Autowired
+    //private OpticalService opticalService;
+
     private Socket socket;
 
     public ServerConfig(){}
@@ -27,13 +34,16 @@ public class ServerConfig extends Thread{
 
     private String handle(InputStream is) throws Exception {
 
-        byte[] inBytes = new byte[2048];
+        byte[] inBytes = new byte[10000];
         int len = is.read(inBytes);
         if(len != -1) {
             StringBuffer request = new StringBuffer();
             request.append(new String(inBytes, 0, len, "UTF-8"));
+            log.info("request: " + ByteUtil.getString(inBytes));
             log.info("request: " + request.toString());
             //TODO: 依次解码，按照类型处理16进制数据
+            OpticalServiceImpl.DTSRequestSwitcher(inBytes, len);
+
             return "ok";
         }else{
             log.error("socket数据读取处理异常");
@@ -42,6 +52,7 @@ public class ServerConfig extends Thread{
     }
     @Override
     public void run() {
+
         BufferedWriter writer = null;
         try {
             // 设置连接超时9秒
@@ -52,6 +63,7 @@ public class ServerConfig extends Thread{
             String result = null;
             try {
                 result = handle(inputStream);
+                log.info("result: " + result);
                 writer.write(result);
                 writer.newLine();
                 writer.flush();

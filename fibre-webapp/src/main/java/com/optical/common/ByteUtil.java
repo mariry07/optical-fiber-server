@@ -75,9 +75,10 @@ public class ByteUtil {
     }
 
 
-    public static short getShort(byte[] bytes)
+    //大端模式,且为无符号整型
+    public static int getShort(byte[] bytes)
     {
-        return (short) ((0xff & bytes[0]) | (0xff00 & (bytes[1] << 8)));
+        return (int) ((0xff00 & bytes[0]<< 8) | (0xff & (bytes[1] ))) & 0xffff;
     }
 
     public static char getChar(byte[] bytes)
@@ -85,9 +86,10 @@ public class ByteUtil {
         return (char) ((0xff & bytes[0]) | (0xff00 & (bytes[1] << 8)));
     }
 
+    //大端模式
     public static int getInt(byte[] bytes)
     {
-        return (0xff & bytes[0]) | (0xff00 & (bytes[1] << 8)) | (0xff0000 & (bytes[2] << 16)) | (0xff000000 & (bytes[3] << 24));
+        return (0xff000000 & bytes[0] << 24) | (0xff0000 & (bytes[1] << 16)) | (0xff00 & (bytes[2] << 8)) | (0xff & (bytes[3]));
     }
 
     public static long getLong(byte[] bytes)
