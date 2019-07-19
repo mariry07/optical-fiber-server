@@ -1,7 +1,7 @@
 <configuration debug="true" scan="true" scanPeriod="30 seconds">
 
-    <property name="APP_NAME" value="tb-firecontrol-release" />
-    <property name="LOG_HOME" value="/tb-firecontrol-release" />
+    <property name="APP_NAME" value="tb-optical-release" />
+    <property name="LOG_HOME" value="/tb-optical-release" />
     <property name="ENCODER_PATTERN"
               value="%d{yyyy-MM-dd  HH:mm:ss.SSS} %-5level [%10.10thread] [%X{X-B3-TraceId}] %logger{20} - %msg%n" />
     <contextName>${APP_NAME}</contextName>

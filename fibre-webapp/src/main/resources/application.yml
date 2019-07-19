@@ -10,10 +10,14 @@ spring:
     aop:
      proxyTargetClass: true
      auto: true
+  datasource:
+    url: jdbc:mysql://172.16.20.83:3306/fire_cloud_server?characterEncoding=UTF-8
+    username: root
+    password: S!@#s123
 
 mybatis:
-  mapper-locations: classpath*:sqlmap/*Mapper.xml
-  type-aliases-package: com.firecontrol.domain.entity
+  mapper-locations: classpath*:sql/*Mapper.xml
+  type-aliases-package: com.optical.bean
   configuration:
     # 全局启用或禁用延迟加载。当禁用时，所有关联对象都会即时加载。
     lazy-loading-enabled: false
@@ -44,3 +48,5 @@ socket:
  pool-core: 10
  pool-max: 30
  pool-queue-init: 10
+
+

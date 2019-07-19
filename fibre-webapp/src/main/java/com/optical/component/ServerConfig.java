@@ -6,6 +6,9 @@ import com.optical.common.ByteUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.Socket;
@@ -16,20 +19,24 @@ import java.util.zip.DataFormatException;
 /**
  * Created by mariry on 2019/7/16.
  */
-
+@Service
 public class ServerConfig extends Thread{
 
     private static final Logger log = LoggerFactory.getLogger(ServerConfig.class);
 
-    //@Autowired
-    //private OpticalService opticalService;
-
     private Socket socket;
+
+    private OpticalServiceImpl opticalService;
 
     public ServerConfig(){}
 
     public ServerConfig(Socket socket) {
         this.socket = socket;
+    }
+
+    public ServerConfig(Socket socket, OpticalServiceImpl opticalService) {
+        this.socket = socket;
+        this.opticalService = opticalService;
     }
 
     private String handle(InputStream is) throws Exception {
@@ -39,10 +46,8 @@ public class ServerConfig extends Thread{
         if(len != -1) {
             StringBuffer request = new StringBuffer();
             request.append(new String(inBytes, 0, len, "UTF-8"));
-            log.info("request: " + ByteUtil.getString(inBytes));
-            log.info("request: " + request.toString());
-            //TODO: 依次解码，按照类型处理16进制数据
-            OpticalServiceImpl.DTSRequestSwitcher(inBytes, len);
+
+            opticalService.DTSRequestSwitcher(inBytes, len);
 
             return "ok";
         }else{
