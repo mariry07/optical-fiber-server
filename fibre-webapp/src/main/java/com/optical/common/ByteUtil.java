@@ -11,6 +11,11 @@ import java.nio.charset.Charset;
 public class ByteUtil {
     private static final Logger log = LoggerFactory.getLogger(ByteUtil.class);
 
+    public static byte getByte(int data) {
+        byte value = (byte) (data & 0xff);
+        return value;
+    }
+
     public static byte[] getBytes(short data)
     {
         byte[] bytes = new byte[2];
@@ -34,6 +39,20 @@ public class ByteUtil {
         bytes[1] = (byte) ((data & 0xff00) >> 8);
         bytes[2] = (byte) ((data & 0xff0000) >> 16);
         bytes[3] = (byte) ((data & 0xff000000) >> 24);
+        return bytes;
+    }
+
+    public static byte[] getBytesByIntAsShort(int data) {
+        byte[] bytes = new byte[2];
+        bytes[0] = (byte) ((data & 0xff00) >> 8);
+        bytes[1] = (byte) (data & 0xff);
+        return bytes;
+    }
+
+    public static byte[] getCRCBytesByIntAsShort(int data) {
+        byte[] bytes = new byte[2];
+        bytes[0] = (byte) (data & 0xff);
+        bytes[1] = (byte) ((data & 0xff00) >> 8);
         return bytes;
     }
 
@@ -76,6 +95,12 @@ public class ByteUtil {
 
 
     //大端模式,且为无符号整型
+    public static int getTiny(byte[] bytes)
+    {
+        return (int) (0xff & (bytes[0] )) & 0xff;
+    }
+
+    //大端模式,且为无符号整型
     public static int getShort(byte[] bytes)
     {
         return (int) ((0xff00 & bytes[0]<< 8) | (0xff & (bytes[1] ))) & 0xffff;
@@ -90,6 +115,11 @@ public class ByteUtil {
     public static int getInt(byte[] bytes)
     {
         return (0xff000000 & bytes[0] << 24) | (0xff0000 & (bytes[1] << 16)) | (0xff00 & (bytes[2] << 8)) | (0xff & (bytes[3]));
+    }
+
+    public static int getInt(byte value)
+    {
+        return (int) value & 0xff;
     }
 
     public static long getLong(byte[] bytes)

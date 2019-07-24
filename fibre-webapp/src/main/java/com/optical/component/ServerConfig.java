@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -39,17 +40,14 @@ public class ServerConfig extends Thread{
         this.opticalService = opticalService;
     }
 
-    private String handle(InputStream is) throws Exception {
+    private byte[] handle(InputStream is) throws Exception {
 
         byte[] inBytes = new byte[10000];
         int len = is.read(inBytes);
         if(len != -1) {
             StringBuffer request = new StringBuffer();
             request.append(new String(inBytes, 0, len, "UTF-8"));
-
-            opticalService.DTSRequestSwitcher(inBytes, len);
-
-            return "ok";
+            return opticalService.DTSRequestSwitcher(inBytes, len);
         }else{
             log.error("socket数据读取处理异常");
             throw new DataFormatException("数据处理异常");
@@ -59,30 +57,39 @@ public class ServerConfig extends Thread{
     public void run() {
 
         BufferedWriter writer = null;
+        DataOutputStream output = null;
+
         try {
-            // 设置连接超时9秒
-            socket.setSoTimeout(9000);
+            // 设置连接超时15秒
+            socket.setSoTimeout(15000);
             log.info(socket.getRemoteSocketAddress() + " -> 连接成功");
             InputStream inputStream = socket.getInputStream();
-            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            String result = null;
+            output = new DataOutputStream(socket.getOutputStream());
+//            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+            byte[] result = null;
             try {
                 result = handle(inputStream);
-                log.info("result: " + result);
-                writer.write(result);
-                writer.newLine();
-                writer.flush();
+                output.write(result, 0, result.length);
+                output.flush();
+//                writer.write(ByteUtil.getString(result));
+//                writer.newLine();
+//                writer.flush();
             } catch (Exception e) {
-                writer.write("error");
-                writer.newLine();
-                writer.flush();
+                output.writeBytes("error");
+                output.flush();
+//                writer.write("error");
+//                writer.newLine();
+//                writer.flush();
                 log.error("发生异常! e: " + e);
                 try {
                     log.error("再次接受!");
                     result = handle(inputStream);
-                    writer.write(result);
-                    writer.newLine();
-                    writer.flush();
+                    output.write(result, 0, result.length);
+                    output.flush();
+//                    writer.write(result.toString());
+//                    writer.newLine();
+//                    writer.flush();
                 } catch (Exception e1) {
                     log.error("再次接受, 发生异常,连接关闭, e1: " + e1);
                 }
@@ -90,7 +97,8 @@ public class ServerConfig extends Thread{
         } catch (SocketException socketException) {
             socketException.printStackTrace();
             try {
-                writer.close();
+                output.close();
+//                writer.close();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
@@ -98,13 +106,12 @@ public class ServerConfig extends Thread{
             e.printStackTrace();
         } finally {
             try {
-                writer.close();
+                output.close();
+//                writer.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-
-
 
 }
