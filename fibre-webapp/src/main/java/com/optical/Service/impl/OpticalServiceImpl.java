@@ -5,6 +5,7 @@ import com.optical.Service.OpticalService;
 import com.optical.bean.OpticalFibreTemp;
 import com.optical.common.ByteUtil;
 import com.optical.common.CRC16Util;
+import com.optical.mapper.OpticalFibreAlarmMapper;
 import com.optical.mapper.OpticalFibreTempMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,9 @@ public class OpticalServiceImpl{
 
     @Autowired
     private OpticalFibreTempMapper opticalFibreTempMapper;
+
+    @Autowired
+    private OpticalFibreAlarmMapper opticalFibreAlarmMapper;
 
     public byte[] DTSRequestSwitcher(byte[] request, int len) {
         /*
@@ -82,13 +86,14 @@ public class OpticalServiceImpl{
             if(alarmType == 3) {
                 //TODO: 清空报警
                 log.info("收到清空报警信息通知， 时间： " + new Date());
-
+                opticalFibreAlarmMapper.clearAlarmAll();
             }else if(alarmType == 1){
                 //TODO:添加报警
                 //testStr: 1通道1实际接入的光纤长度超限：当前测量长度494.0米，实际接入光纤长度2414.8米。1_au002通道1-６号柜中高温报警：5.3-11.0;
 
             }else if(alarmType == 2) {
                 //删除报警,本报警类型已经废弃，不做处理
+
             }
 
         }
@@ -126,7 +131,7 @@ public class OpticalServiceImpl{
             //插入数据库
             OpticalFibreTemp opt = new OpticalFibreTemp();
             opt.setChannel(1);
-            opt.setMsgtype(0);
+            opt.setMsgtype(0);//温度数据
             opt.setRecdTime(new Date());
             opt.setTempData(JSON.toJSONString(tempData));
             opticalFibreTempMapper.insert(opt);
@@ -222,7 +227,7 @@ public class OpticalServiceImpl{
         System.arraycopy(query, 3, crcData, 0, 12); //本请求 需crc校验的帧长度为12，hardcode
         byte[]crcByte = ByteUtil.getCRCBytesByIntAsShort(CRC16Util.calcCrc16(crcData));
         System.arraycopy(crcByte, 0, query, 15, 2);
-//        printLog(query);
+        printLog(query);
         return query;
     }
 
