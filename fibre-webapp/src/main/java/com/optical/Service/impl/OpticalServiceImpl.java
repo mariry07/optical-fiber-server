@@ -2,6 +2,7 @@ package com.optical.Service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.optical.Service.OpticalService;
+import com.optical.bean.OpticalFibreAlarmEntity;
 import com.optical.bean.OpticalFibreTemp;
 import com.optical.common.ByteUtil;
 import com.optical.common.CRC16Util;
@@ -44,6 +45,7 @@ public class OpticalServiceImpl{
     private OpticalFibreAlarmMapper opticalFibreAlarmMapper;
 
     public byte[] DTSRequestSwitcher(byte[] request, int len) {
+        byte[] result;
         /*
         初始化
         1. 前3字节 11 02 00 固定
@@ -63,8 +65,6 @@ public class OpticalServiceImpl{
         byte[] queryFrame = null;          //若需要返回请求，则写入本变量
 
         System.arraycopy(request, 5, typeFrame, 0, 2);
-        String testStr = ByteUtil.getString(request, "UTF-8");
-        log.info("testStr: {}", testStr);
 
         if(Integer.toHexString(ByteUtil.getShort(typeFrame)).equals("31aa")){
             //0x 31aa 读取当前温度
@@ -82,24 +82,55 @@ public class OpticalServiceImpl{
             }
         }else if(Integer.toHexString(ByteUtil.getShort(typeFrame)).equals("3caa")) {
             //DTS主动推送报警信息
-            int alarmType = ByteUtil.getInt(request[10]);
+            int alarmType = ByteUtil.getInt(request[9]);
             if(alarmType == 3) {
-                //TODO: 清空报警
+                //清空报警
                 log.info("收到清空报警信息通知， 时间： " + new Date());
                 opticalFibreAlarmMapper.clearAlarmAll();
             }else if(alarmType == 1){
-                //TODO:添加报警
+                //添加报警
                 //testStr: 1通道1实际接入的光纤长度超限：当前测量长度494.0米，实际接入光纤长度2414.8米。1_au002通道1-６号柜中高温报警：5.3-11.0;
+                log.info("收到新报警信息通知， 时间： " + new Date());
+                OpticalFibreAlarmEntity alarm = new OpticalFibreAlarmEntity();
+                byte[] level = new byte[1];
+                byte[] timeStamp = new byte[19];
+                byte[] dtsId;
+                byte[] source;
+                byte[] alarmInfo=new byte[200];
+                byte[] dtsIdLength = new byte[1];;
+                byte[] sourceLength = new byte[1];;
+
+                System.arraycopy(request, 10, level, 0, 1);
+                System.arraycopy(request, 11, timeStamp, 0, 19);
+                System.arraycopy(request, 30, dtsIdLength, 0, 1);
+                System.arraycopy(request, 31, sourceLength, 0, 1);
+                dtsId = new byte[ByteUtil.getTiny(dtsIdLength)];
+                source = new byte[ByteUtil.getTiny(sourceLength)];
+                int infoStart = 32+ByteUtil.getTiny(dtsIdLength);
+                System.arraycopy(request, 32, dtsId, 0, ByteUtil.getTiny(dtsIdLength));
+                System.arraycopy(request, infoStart, source, 0, ByteUtil.getTiny(sourceLength));
+                infoStart += ByteUtil.getTiny(sourceLength);
+                int infoOffset = len -4 - infoStart;
+
+                System.arraycopy(request, infoStart, alarmInfo, 0, infoOffset);
+
+                alarm.setLevel(Integer.toHexString(ByteUtil.getTiny(level)));
+                alarm.setRecdTime(new Date());
+                alarm.setAlarmTimeStr(ByteUtil.getString(timeStamp, "UTF-8"));
+                alarm.setDtsId(ByteUtil.getString(dtsId, "UTF-8"));
+                alarm.setSource(ByteUtil.getString(source, "UTF-8"));
+                alarm.setAlarmInfo(ByteUtil.getString(alarmInfo, "UTF-8"));
+                alarm.setAlarmStatus(0);
+                alarm.setDf(0);
+                opticalFibreAlarmMapper.insert(alarm);
 
             }else if(alarmType == 2) {
                 //删除报警,本报警类型已经废弃，不做处理
-
             }
-
+        }else{
+            log.error("ERROR: DTSRequestSwitcher: unknown request type: " + Integer.toHexString(ByteUtil.getShort(typeFrame)));
         }
-        log.error("ERROR: DTSRequestSwitcher: unknown request type: " + Integer.toHexString(ByteUtil.getShort(typeFrame)));
-
-        return null;
+        return ByteUtil.getBytes("ok");
     }
 
 
@@ -120,7 +151,8 @@ public class OpticalServiceImpl{
         }else{
             tempData = new ArrayList<>(len);
             Integer current = 0;
-            while(current < len){
+            Integer end = len * 4;
+            while(current < end){
                 System.arraycopy(dataFrame, current, tmpByte, 0, 4);
 
                 ByteBuffer tt = ByteBuffer.wrap(tmpByte);
@@ -211,7 +243,7 @@ public class OpticalServiceImpl{
         // dd 62    CRC校验帧
         // 11 03    结束帧
 
-        //TODO：本请求总长19，暂时hardcode，后续加静态常量
+        //本请求总长19，暂时hardcode，后续加静态常量
         byte[] query = new byte[19];
         System.arraycopy(queryTemplate, 0, query, 0, 19);
         //设置通道号

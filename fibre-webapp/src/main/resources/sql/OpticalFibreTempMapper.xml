@@ -17,7 +17,7 @@
     <insert id="insert" parameterType="com.optical.bean.OpticalFibreTemp" >
         insert into tb_fibre_temp (channel, tempData, msgtype, recdTime)
         values (#{channel,jdbcType=INTEGER}, #{tempData,jdbcType=LONGVARCHAR},
-        #{msgtype,jdbcType=INTEGER}, #{recdTime,jdbcType=TIMESTAMP}
+        #{msgtype,jdbcType=INTEGER}, now()
         )
     </insert>
 

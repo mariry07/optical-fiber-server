@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.optical.mapper.OpticalFibreAlarmMapper" >
+    <resultMap id="BaseResultMap" type="com.optical.bean.OpticalFibreAlarmEntity" >
+        <!-- column 对应数据库字段， property对应实体bean的属性 -->
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="dts_id" property="dtsId" jdbcType="VARCHAR" />
+        <result column="source" property="source" jdbcType="VARCHAR" />
+        <result column="alarm_info" property="alarmInfo" jdbcType="VARCHAR" />
+        <result column="alarm_time_str" property="alarmTimeStr" jdbcType="VARCHAR" />
+        <result column="code" property="code" jdbcType="INTEGER" />
+        <result column="level" property="level" jdbcType="VARCHAR" />
+        <result column="recdTime" property="recdTime" jdbcType="TIMESTAMP" />
+        <result column="alarm_status" property="alarmStatus" jdbcType="INTEGER" />
+        <result column="df" property="df" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, dts_id, source,code,alarm_info, alarm_time_str, `level`,recdTime,alarm_status,df
+    </sql>
+
+    <insert id="insert" parameterType="com.optical.bean.OpticalFibreAlarmEntity" >
+        insert into tb_fibre_alarm ( dts_id, source,code, `level`,recdTime,alarm_status,df, alarm_info, alarm_time_str)
+            values (#{dtsId,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR},
+        #{code,jdbcType=INTEGER}, #{level,jdbcType=VARCHAR},#{recdTime, jdbcType=TIMESTAMP},
+        #{alarmStatus, jdbcType=INTEGER},#{df, jdbcType=INTEGER},#{alarmInfo,jdbcType=VARCHAR},
+        #{alarmTimeStr,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <select id="getData" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from tb_fibre_alarm
+        where df = 0
+        order by recdTime DESC
+        <if test="start!=null and start!='' and end!=null and end!=''">
+        limit #{start}, #{end}
+        </if>
+    </select>
+
+    <update id="updateAlarmStatus" parameterType="java.util.Map">
+        update tb_fibre_alarm
+        set alarm_status = #{alarmStatus}
+        where id = #{id}
+    </update>
+
+    <update id="deleteAlarm" parameterType="java.util.Map">
+        update tb_fibre_alarm
+        set df = 1
+        where id = #{id}
+    </update>
+
+    <update id="clearAlarmAll">
+        update tb_fibre_alarm
+        set alarm_status = 1
+        where df != 1
+    </update>
+
+
+</mapper>

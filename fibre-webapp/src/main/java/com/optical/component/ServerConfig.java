@@ -104,10 +104,10 @@ public class ServerConfig extends Thread{
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             try {
                 output.close();
-//                writer.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
