@@ -105,13 +105,13 @@ public class ServerConfig extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        finally {
-            try {
-                output.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        finally {
+//            try {
+//                output.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
 }

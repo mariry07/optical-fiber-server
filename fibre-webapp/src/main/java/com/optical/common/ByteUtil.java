@@ -3,6 +3,9 @@ package com.optical.common;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.nio.charset.Charset;
 
 /**
@@ -112,14 +115,24 @@ public class ByteUtil {
     }
 
     //大端模式
-    public static int getInt(byte[] bytes)
+    public static int getIntHighEndian(byte[] bytes)
     {
         return (0xff000000 & bytes[0] << 24) | (0xff0000 & (bytes[1] << 16)) | (0xff00 & (bytes[2] << 8)) | (0xff & (bytes[3]));
+    }
+
+    //小端模式
+    public static int getIntLowEndian(byte[] bytes) {
+        return (0xff000000 & bytes[3] << 24) | (0xff0000 & (bytes[2] << 16)) | (0xff00 & (bytes[1] << 8)) | (0xff & (bytes[0]));
     }
 
     public static int getInt(byte value)
     {
         return (int) value & 0xff;
+    }
+
+    public static int getUnsignedInt(byte value)
+    {
+        return (int) value & 0x0ff;
     }
 
     public static long getLong(byte[] bytes)
@@ -128,10 +141,16 @@ public class ByteUtil {
                 | (0xff00000000L & ((long)bytes[4] << 32)) | (0xff0000000000L & ((long)bytes[5] << 40)) | (0xff000000000000L & ((long)bytes[6] << 48)) | (0xff00000000000000L & ((long)bytes[7] << 56));
     }
 
-    public static float getFloat(byte[] bytes)
+    public static float getHighFloat(byte[] bytes)
     {
-        return Float.intBitsToFloat(getInt(bytes));
+        return Float.intBitsToFloat(getIntHighEndian(bytes));
     }
+
+    public static float getLowFloat(byte[] bytes)
+    {
+        return Float.intBitsToFloat(getIntLowEndian(bytes));
+    }
+
 
     public static double getDouble(byte[] bytes)
     {
@@ -148,6 +167,28 @@ public class ByteUtil {
     public static String getString(byte[] bytes)
     {
         return getString(bytes, "GBK");
+    }
+
+
+    /**
+     * 对象转数组
+     * @param obj
+     * @return
+     */
+    public static byte[] Object2ByteArray (Object obj) {
+        byte[] bytes = null;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(obj);
+            oos.flush();
+            bytes = bos.toByteArray ();
+            oos.close();
+            bos.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return bytes;
     }
 
 }

@@ -46,6 +46,8 @@ public class OpticalServiceImpl{
 
     public byte[] DTSRequestSwitcher(byte[] request, int len) {
         byte[] result;
+        log.info("byte: " + ByteUtil.getString(request));
+
         /*
         初始化
         1. 前3字节 11 02 00 固定
@@ -55,7 +57,7 @@ public class OpticalServiceImpl{
         5. 倒数第4第3字节，CRC16-modbus 校验值
         6. 倒数最后2字节，11 03 结束符
          */
-        byte[] startFrame = new byte[2];
+        /*byte[] startFrame = new byte[2];
         byte[] endFrame = new byte[2];
         byte[] crcFrame = new byte[2];
         byte[] dataLen = new byte[2];       //数据包长度，为上传数据的第8和第9字节
@@ -129,7 +131,7 @@ public class OpticalServiceImpl{
             }
         }else{
             log.error("ERROR: DTSRequestSwitcher: unknown request type: " + Integer.toHexString(ByteUtil.getShort(typeFrame)));
-        }
+        }*/
         return ByteUtil.getBytes("ok");
     }
 

@@ -2,6 +2,7 @@ package com.optical.boot;
 
 import com.optical.Service.impl.OpticalServiceImpl;
 import com.optical.bean.SocketProperties;
+import com.optical.component.NettyServer;
 import com.optical.component.SocketListener;
 import com.optical.component.SocketRunner;
 import org.mybatis.spring.annotation.MapperScan;
@@ -17,7 +18,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
 
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 @SpringBootApplication
 //@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
@@ -34,34 +38,46 @@ public class FibreWebappApplication {
 
 	public static void main(String[] args) {
 
-		//SpringApplication.run(FibreWebappApplication.class, args);
+		BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(200);
 
-		ApplicationContext context = SpringApplication.run(FibreWebappApplication.class, args);
-		log.info("=======================here start FibreWebappApplication! ===========================");
-		context.getBean(SocketRunner.class).runrun();
+		SpringApplication.run(FibreWebappApplication.class, args);
+
+		//启动netty服务端(生产者)
+		NettyServer nettyServer = new NettyServer(queue, 200);
+		//需要内网地址
+        nettyServer.start(new InetSocketAddress("172.31.243.186", 11002));
+//		nettyServer.start(new InetSocketAddress("127.0.0.1", 11002));
+
+
+
+//		ApplicationContext context = SpringApplication.run(FibreWebappApplication.class, args);
+//		log.info("=======================here start FibreWebappApplication! ===========================");
+//		context.getBean(SocketRunner.class).runrun();
+
+
 
 	}
 
-
-	@Primary
-	@Bean
-	public OpticalServiceImpl createOpticalServiceImpl() {
-		OpticalServiceImpl opticalService = new OpticalServiceImpl();
-		return opticalService;
-	}
-
-	@Primary
-	@Bean
-	public SocketProperties createSocketProperties() {
-		SocketProperties socketProperties = new SocketProperties();
-		return socketProperties;
-	}
-
-	@Bean
-	public SocketRunner createSocketRunner() {
-		SocketRunner socketRunner = new SocketRunner();
-		return socketRunner;
-	}
-
+//
+//	@Primary
+//	@Bean
+//	public OpticalServiceImpl createOpticalServiceImpl() {
+//		OpticalServiceImpl opticalService = new OpticalServiceImpl();
+//		return opticalService;
+//	}
+//
+//	@Primary
+//	@Bean
+//	public SocketProperties createSocketProperties() {
+//		SocketProperties socketProperties = new SocketProperties();
+//		return socketProperties;
+//	}
+//
+//	@Bean
+//	public SocketRunner createSocketRunner() {
+//		SocketRunner socketRunner = new SocketRunner();
+//		return socketRunner;
+//	}
+//
 
 }

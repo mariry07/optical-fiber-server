@@ -1,5 +1,5 @@
 server:
- port: 8003
+ port: 11007
 
 
 spring:
@@ -11,9 +11,9 @@ spring:
      proxyTargetClass: true
      auto: true
   datasource:
-    url: jdbc:mysql://172.16.20.83:3306/fire_cloud_server?characterEncoding=UTF-8
-    username: root
-    password: S!@#s123
+    url: jdbc:mysql://47.105.53.60:3306/fire_cloud_server?characterEncoding=UTF-8
+    username: tb
+    password: Ss!@#123
 
 mybatis:
   mapper-locations: classpath*:sql/*Mapper.xml
@@ -43,7 +43,7 @@ mybatis:
     jdbc-type-for-null: 'null'
 
 socket:
- port: 8002
+ port: 11002
  pool-keep: 20
  pool-core: 10
  pool-max: 30
