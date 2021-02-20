@@ -1,1 +1,5 @@
 this is my readme file
+
+1. 解析纯lyra协议
+2. 处理单个设备上传的多个可能存在拆包和粘包的lyra协议16进制字节流
+3. netty server，暂未包含反向通信功能，hashmap待完善
